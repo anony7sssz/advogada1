@@ -131,6 +131,47 @@
   @keyframes rotate {
     100% { transform: rotate(1turn); }
   }
+  
+  .whatsapp-btn {
+    @apply flex items-center justify-center gap-2 py-3 px-8 rounded-lg font-medium text-white transition-all duration-300;
+    background: linear-gradient(to right, #9b87f5, #4361ee);
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+  }
+  
+  .whatsapp-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to right, #7a68c3, #3550cd);
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  .whatsapp-btn:hover::before {
+    opacity: 1;
+  }
+  
+  .animate-pulse-glow {
+    animation: pulse-glow 2s infinite;
+  }
+  
+  @keyframes pulse-glow {
+    0% {
+      box-shadow: 0 0 5px rgba(155, 135, 245, 0.3), 0 0 10px rgba(155, 135, 245, 0.2);
+    }
+    50% {
+      box-shadow: 0 0 10px rgba(155, 135, 245, 0.5), 0 0 20px rgba(155, 135, 245, 0.4);
+    }
+    100% {
+      box-shadow: 0 0 5px rgba(155, 135, 245, 0.3), 0 0 10px rgba(155, 135, 245, 0.2);
+    }
+  }
 }
 
 @layer components {

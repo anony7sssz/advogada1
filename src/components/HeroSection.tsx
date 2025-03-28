@@ -1,5 +1,5 @@
 
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Send } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 const HeroSection = () => {
@@ -28,9 +28,9 @@ const HeroSection = () => {
                 href="https://wa.me/5500000000000" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="whatsapp-btn flex items-center justify-center gap-2 animate-pulse-glow"
+                className="whatsapp-btn animate-pulse-glow"
               >
-                Fale comigo <ArrowRight size={18} />
+                Fale comigo <Send size={18} />
               </a>
               
               <a 

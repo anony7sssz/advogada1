@@ -1,5 +1,5 @@
 
-import { Phone, Mail, MapPin, MessageSquare } from "lucide-react";
+import { Phone, Mail, MapPin, MessageSquare, Send } from "lucide-react";
 
 const ContactSection = () => {
   return (
@@ -65,7 +65,7 @@ const ContactSection = () => {
                   rel="noopener noreferrer"
                   className="inline-block mt-4 whatsapp-btn animate-pulse-glow"
                 >
-                  Enviar mensagem
+                  Enviar mensagem <Send size={18} />
                 </a>
               </div>
             </div>
