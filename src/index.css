@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -133,21 +134,6 @@
 }
 
 @layer components {
-  .whatsapp-btn {
-    @apply relative overflow-hidden bg-gradient-to-r from-green-500 to-green-600 
-    hover:from-green-600 hover:to-green-700 transition-all duration-300 shadow-lg 
-    font-medium py-3 px-8 rounded-lg text-white transform hover:scale-105;
-  }
-  
-  .whatsapp-btn::before {
-    @apply content-[''] absolute top-0 left-0 w-full h-full bg-white opacity-0 
-    transition-opacity duration-300;
-  }
-  
-  .whatsapp-btn:hover::before {
-    @apply opacity-10;
-  }
-
   .service-card {
     @apply relative p-6 rounded-lg overflow-hidden bg-opacity-10 bg-white backdrop-blur-sm
     border border-gray-800 hover:border-lawyer-purple-light/30 transition-all duration-300
@@ -158,26 +144,6 @@
     @apply mb-4 p-3 inline-flex items-center justify-center rounded-full 
     bg-gradient-to-br from-lawyer-purple-light/20 to-lawyer-blue/20
     text-lawyer-purple-light;
-  }
-  
-  .floating-whatsapp-btn {
-    @apply fixed bottom-6 right-6 w-16 h-16 rounded-full bg-green-500 flex items-center justify-center text-white shadow-lg z-50 hover:scale-110 transition-transform duration-300;
-    box-shadow: 0 0 15px rgba(0, 200, 83, 0.5);
-  }
-  
-  .notification-pill {
-    @apply fixed top-24 right-6 py-2 px-4 bg-gradient-to-r from-lawyer-purple to-lawyer-blue rounded-full text-white text-sm font-medium shadow-lg z-50 flex items-center gap-2;
-    animation: slideIn 0.5s ease-out, float 3s ease-in-out infinite;
-  }
-  
-  @keyframes slideIn {
-    from { transform: translateX(100%); opacity: 0; }
-    to { transform: translateX(0); opacity: 1; }
-  }
-  
-  @keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
   }
   
   .card-hover-effect {

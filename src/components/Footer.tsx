@@ -82,17 +82,6 @@ const Footer = () => {
                 <span>(00) 00000-0000</span>
               </li>
             </ul>
-            
-            <div className="mt-6">
-              <a 
-                href="https://wa.me/5500000000000" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="inline-block py-2 px-4 bg-gradient-to-r from-lawyer-purple to-lawyer-blue text-white font-medium rounded-lg hover:opacity-90 transition-all duration-300 shadow-[0_4px_10px_rgba(155,135,245,0.3)]"
-              >
-                Agendar Consulta
-              </a>
-            </div>
           </div>
         </div>
         
