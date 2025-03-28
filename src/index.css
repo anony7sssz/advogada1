@@ -1,9 +1,8 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap');
 
 @layer base {
   :root {
@@ -54,6 +53,18 @@
     overflow-x: hidden;
   }
   
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', serif;
+  }
+  
+  .title-font {
+    font-family: 'Playfair Display', serif;
+  }
+  
+  .body-font {
+    font-family: 'Montserrat', sans-serif;
+  }
+  
   .glow-text {
     text-shadow: 0 0 5px rgba(155, 135, 245, 0.5), 0 0 10px rgba(155, 135, 245, 0.3);
   }
@@ -85,6 +96,40 @@
     mask-composite: exclude;
     pointer-events: none;
   }
+  
+  .animate-border-glow {
+    position: relative;
+    z-index: 0;
+    overflow: hidden;
+  }
+  
+  .animate-border-glow::before,
+  .animate-border-glow::after {
+    content: '';
+    position: absolute;
+    left: -50%;
+    top: -50%;
+    width: 200%;
+    height: 200%;
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-size: 50% 50%, 50% 50%;
+    background-position: 0 0, 100% 0, 100% 100%, 0 100%;
+    background-image: linear-gradient(#9b87f5, #9b87f5), 
+                      linear-gradient(#4361ee, #4361ee), 
+                      linear-gradient(#9b87f5, #9b87f5), 
+                      linear-gradient(#4361ee, #4361ee);
+    animation: rotate 4s linear infinite;
+    z-index: -1;
+  }
+  
+  .animate-border-glow::after {
+    filter: blur(15px);
+  }
+  
+  @keyframes rotate {
+    100% { transform: rotate(1turn); }
+  }
 }
 
 @layer components {
@@ -113,5 +158,29 @@
     @apply mb-4 p-3 inline-flex items-center justify-center rounded-full 
     bg-gradient-to-br from-lawyer-purple-light/20 to-lawyer-blue/20
     text-lawyer-purple-light;
+  }
+  
+  .floating-whatsapp-btn {
+    @apply fixed bottom-6 right-6 w-16 h-16 rounded-full bg-green-500 flex items-center justify-center text-white shadow-lg z-50 hover:scale-110 transition-transform duration-300;
+    box-shadow: 0 0 15px rgba(0, 200, 83, 0.5);
+  }
+  
+  .notification-pill {
+    @apply fixed top-24 right-6 py-2 px-4 bg-gradient-to-r from-lawyer-purple to-lawyer-blue rounded-full text-white text-sm font-medium shadow-lg z-50 flex items-center gap-2;
+    animation: slideIn 0.5s ease-out, float 3s ease-in-out infinite;
+  }
+  
+  @keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+  
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+  
+  .card-hover-effect {
+    @apply transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_10px_20px_rgba(155,135,245,0.3)];
   }
 }
