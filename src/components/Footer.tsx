@@ -7,7 +7,7 @@ const Footer = () => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
-            <div className="text-2xl font-bold gradient-text mb-4">Advogada</div>
+            <div className="text-2xl font-bold gradient-text mb-4">Nathalia Advocacia</div>
             <p className="text-gray-400 mb-4">
               Advocacia especializada em Contratos e Prestação de Serviços. 
               Soluções jurídicas personalizadas para você e sua empresa.
@@ -69,7 +69,7 @@ const Footer = () => {
         
         <div className="mt-12 pt-8 border-t border-gray-800 text-center">
           <p className="text-gray-400">
-            &copy; {new Date().getFullYear()} Dra. Ana Silva. Todos os direitos reservados. OAB/XX 123.456
+            &copy; {new Date().getFullYear()} Dra. Nathalia. Todos os direitos reservados. OAB/XX 123.456
           </p>
         </div>
       </div>

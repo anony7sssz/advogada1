@@ -1,5 +1,6 @@
 
 import { ArrowRight } from "lucide-react";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 const HeroSection = () => {
   return (
@@ -13,7 +14,7 @@ const HeroSection = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
           <div className="space-y-6 text-center lg:text-left">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
-              <span className="gradient-text">Advocacia</span> especializada em 
+              <span className="gradient-text">Nathalia</span> especializada em 
               <span className="glow-text block mt-2">Contratos e Serviços</span>
             </h1>
             
@@ -48,6 +49,13 @@ const HeroSection = () => {
             <div className="relative gradient-border animate-float p-6 rounded-lg">
               <div className="aspect-[4/5] bg-gradient-to-br from-lawyer-purple/5 to-lawyer-blue/5 rounded-lg flex items-center justify-center">
                 <div className="text-center p-8">
+                  <div className="w-full flex justify-center mb-6">
+                    <img 
+                      src="/lovable-uploads/01f4ce23-58f8-4ae1-9f23-a6f7a825b4b3.png" 
+                      alt="Dra. Nathalia" 
+                      className="rounded-lg w-48 h-48 object-cover border-2 border-lawyer-purple/30"
+                    />
+                  </div>
                   <div className="font-bold text-xl mb-4 gradient-text">Segurança Jurídica</div>
                   <p className="text-gray-300">
                     Contratos bem elaborados são a base para relações seguras e duradouras.
