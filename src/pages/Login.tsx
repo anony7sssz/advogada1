@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/use-auth";
+import { toast } from "sonner";
 
 export default function Login() {
   const [email, setEmail] = useState("admin@advogada.com");
@@ -26,9 +27,16 @@ export default function Login() {
     
     try {
       const { error } = await signIn(email, password);
-      if (!error) {
+      if (error) {
+        console.error("Erro de login:", error);
+        toast.error("Erro ao fazer login: " + error.message);
+      } else {
+        toast.success("Login realizado com sucesso!");
         navigate("/admin");
       }
+    } catch (error: any) {
+      console.error("Erro ao tentar login:", error);
+      toast.error("Erro ao fazer login: " + (error.message || "Credenciais inválidas"));
     } finally {
       setIsLoading(false);
     }
