@@ -60,7 +60,14 @@ const ContactSection = () => {
         .select('id')
         .single();
       
-      if (clientError) throw clientError;
+      if (clientError) {
+        console.error("Erro ao criar/encontrar cliente:", clientError);
+        throw clientError;
+      }
+      
+      if (!clientData || !clientData.id) {
+        throw new Error("Falha ao obter o ID do cliente");
+      }
       
       // Set appointment date to next business day at 14:00
       const appointmentDate = getNextBusinessDay();
@@ -75,7 +82,10 @@ const ContactSection = () => {
           appointment_date: appointmentDate.toISOString()
         });
       
-      if (appointmentError) throw appointmentError;
+      if (appointmentError) {
+        console.error("Erro ao criar agendamento:", appointmentError);
+        throw appointmentError;
+      }
       
       toast.success("Consulta agendada com sucesso! Entraremos em contato para confirmar.", {
         duration: 5000

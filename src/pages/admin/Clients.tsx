@@ -21,7 +21,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Eye, Pencil, Plus, Trash2, Users } from "lucide-react";
-import { format } from "date-fns";
 
 type Client = {
   id: string;
@@ -107,17 +106,33 @@ export default function Clients() {
     e.preventDefault();
     
     try {
+      if (!formData.name) {
+        toast({
+          title: "Nome obrigatório",
+          description: "Por favor, informe o nome do cliente.",
+          variant: "destructive",
+        });
+        return;
+      }
+      
       if (editingClient) {
         // Update existing client
-        const { error } = await supabase
+        const { data, error } = await supabase
           .from('clients')
-          .update(formData)
-          .eq('id', editingClient.id);
+          .update({
+            name: formData.name,
+            email: formData.email || null,
+            phone: formData.phone || null,
+            address: formData.address || null
+          })
+          .eq('id', editingClient.id)
+          .select()
+          .single();
         
         if (error) throw error;
         
         setClients(clients.map(c => 
-          c.id === editingClient.id ? { ...c, ...formData } : c
+          c.id === editingClient.id ? { ...c, ...data } : c
         ));
         
         toast({
@@ -128,7 +143,12 @@ export default function Clients() {
         // Create new client
         const { data, error } = await supabase
           .from('clients')
-          .insert(formData)
+          .insert({
+            name: formData.name,
+            email: formData.email || null,
+            phone: formData.phone || null,
+            address: formData.address || null
+          })
           .select()
           .single();
         
@@ -144,6 +164,7 @@ export default function Clients() {
       
       setDialogOpen(false);
     } catch (error: any) {
+      console.error("Erro ao salvar cliente:", error);
       toast({
         title: "Erro ao salvar cliente",
         description: error.message,
