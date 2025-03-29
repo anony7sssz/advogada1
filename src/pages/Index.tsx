@@ -2,12 +2,12 @@
 import { useAuth } from "@/hooks/use-auth";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { HeroSection } from "@/components/HeroSection";
-import { AboutSection } from "@/components/AboutSection";
-import { ServicesSection } from "@/components/ServicesSection";
-import { ContactSection } from "@/components/ContactSection";
-import { Navbar } from "@/components/Navbar";
-import { Footer } from "@/components/Footer";
+import HeroSection from "@/components/HeroSection";
+import AboutSection from "@/components/AboutSection";
+import ServicesSection from "@/components/ServicesSection";
+import ContactSection from "@/components/ContactSection";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 export default function Index() {
   const { user } = useAuth();
