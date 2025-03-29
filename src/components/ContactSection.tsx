@@ -55,8 +55,7 @@ const ContactSection = () => {
           email: formData.email,
           phone: formData.phone || null
         }, {
-          onConflict: 'email',
-          returning: 'minimal'
+          onConflict: 'email'
         })
         .select('id')
         .single();
