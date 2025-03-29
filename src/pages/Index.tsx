@@ -8,6 +8,7 @@ import ServicesSection from "@/components/ServicesSection";
 import ContactSection from "@/components/ContactSection";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { Toaster } from "sonner";
 
 export default function Index() {
   const { user } = useAuth();
@@ -15,6 +16,7 @@ export default function Index() {
 
   return (
     <div className="flex flex-col min-h-screen">
+      <Toaster position="top-right" richColors />
       <Navbar />
       <div className="flex-1">
         <HeroSection />

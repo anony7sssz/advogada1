@@ -1,7 +1,123 @@
 
+import { useState } from "react";
 import { Phone, Mail, MapPin, MessageSquare, Send } from "lucide-react";
+import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 
 const ContactSection = () => {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    subject: "",
+    message: ""
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { id, value } = e.target;
+    setFormData(prev => ({ ...prev, [id]: value }));
+  };
+
+  const validateForm = () => {
+    if (!formData.name.trim()) {
+      toast.error("Por favor, informe seu nome");
+      return false;
+    }
+    if (!formData.email.trim()) {
+      toast.error("Por favor, informe seu email");
+      return false;
+    }
+    if (!formData.subject.trim()) {
+      toast.error("Por favor, informe o assunto");
+      return false;
+    }
+    return true;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!validateForm()) return;
+    
+    setIsSubmitting(true);
+    
+    try {
+      // First, create or find client
+      const { data: clientData, error: clientError } = await supabase
+        .from('clients')
+        .upsert({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone || null
+        }, {
+          onConflict: 'email',
+          returning: 'minimal'
+        })
+        .select('id')
+        .single();
+      
+      if (clientError) throw clientError;
+      
+      // Set appointment date to next business day at 14:00
+      const appointmentDate = getNextBusinessDay();
+      
+      // Create appointment
+      const { error: appointmentError } = await supabase
+        .from('appointments')
+        .insert({
+          client_id: clientData.id,
+          subject: formData.subject,
+          message: formData.message || null,
+          appointment_date: appointmentDate.toISOString()
+        });
+      
+      if (appointmentError) throw appointmentError;
+      
+      toast.success("Consulta agendada com sucesso! Entraremos em contato para confirmar.", {
+        duration: 5000
+      });
+      
+      // Reset form
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        subject: "",
+        message: ""
+      });
+      
+    } catch (error: any) {
+      console.error("Erro ao agendar consulta:", error);
+      toast.error("Erro ao agendar consulta. Por favor, tente novamente.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+  
+  // Helper function to get next business day at 14:00
+  const getNextBusinessDay = () => {
+    const date = new Date();
+    date.setHours(14, 0, 0, 0); // Set to 14:00
+    
+    // Add 1 day
+    date.setDate(date.getDate() + 1);
+    
+    // If it's weekend, adjust to Monday
+    const dayOfWeek = date.getDay();
+    if (dayOfWeek === 6) { // Saturday
+      date.setDate(date.getDate() + 2);
+    } else if (dayOfWeek === 0) { // Sunday
+      date.setDate(date.getDate() + 1);
+    }
+    
+    return date;
+  };
+
   return (
     <section id="contact" className="py-20 relative">
       <div className="absolute inset-0 bg-tech-pattern opacity-5 z-0"></div>
@@ -78,53 +194,84 @@ const ContactSection = () => {
             <div className="relative p-8 rounded-lg bg-lawyer-black/50 backdrop-blur-sm border border-gray-800">
               <h3 className="text-2xl font-semibold mb-6 gradient-text">Agende uma Consulta</h3>
               
-              <form className="space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-1">Nome</label>
-                  <input
+                  <Label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-1">Nome</Label>
+                  <Input
                     type="text"
                     id="name"
+                    value={formData.name}
+                    onChange={handleChange}
                     className="w-full px-4 py-3 bg-lawyer-black/50 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-lawyer-purple-light/50"
                     placeholder="Seu nome completo"
                   />
                 </div>
                 
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-1">E-mail</label>
-                  <input
+                  <Label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-1">E-mail</Label>
+                  <Input
                     type="email"
                     id="email"
+                    value={formData.email}
+                    onChange={handleChange}
                     className="w-full px-4 py-3 bg-lawyer-black/50 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-lawyer-purple-light/50"
                     placeholder="seu@email.com"
                   />
                 </div>
                 
                 <div>
-                  <label htmlFor="subject" className="block text-sm font-medium text-gray-300 mb-1">Assunto</label>
-                  <input
+                  <Label htmlFor="phone" className="block text-sm font-medium text-gray-300 mb-1">Telefone</Label>
+                  <Input
+                    type="tel"
+                    id="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 bg-lawyer-black/50 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-lawyer-purple-light/50"
+                    placeholder="(00) 00000-0000"
+                  />
+                </div>
+                
+                <div>
+                  <Label htmlFor="subject" className="block text-sm font-medium text-gray-300 mb-1">Assunto</Label>
+                  <Input
                     type="text"
                     id="subject"
+                    value={formData.subject}
+                    onChange={handleChange}
                     className="w-full px-4 py-3 bg-lawyer-black/50 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-lawyer-purple-light/50"
                     placeholder="Assunto da mensagem"
                   />
                 </div>
                 
                 <div>
-                  <label htmlFor="message" className="block text-sm font-medium text-gray-300 mb-1">Mensagem</label>
-                  <textarea
+                  <Label htmlFor="message" className="block text-sm font-medium text-gray-300 mb-1">Mensagem</Label>
+                  <Textarea
                     id="message"
                     rows={4}
+                    value={formData.message}
+                    onChange={handleChange}
                     className="w-full px-4 py-3 bg-lawyer-black/50 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-lawyer-purple-light/50"
                     placeholder="Descreva sua necessidade..."
-                  ></textarea>
+                  />
                 </div>
                 
-                <button
+                <Button
                   type="submit"
+                  disabled={isSubmitting}
                   className="w-full py-3 px-6 bg-gradient-to-r from-lawyer-purple to-lawyer-blue text-white font-medium rounded-lg hover:opacity-90 transition-opacity duration-300"
                 >
-                  Enviar Mensagem
-                </button>
+                  {isSubmitting ? (
+                    <span className="flex items-center justify-center">
+                      <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Agendando...
+                    </span>
+                  ) : (
+                    <span>Enviar Mensagem</span>
+                  )}
+                </Button>
               </form>
             </div>
           </div>
