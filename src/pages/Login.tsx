@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/use-auth";
-import { toast } from "sonner";
+import { useToast } from "@/hooks/use-toast";
 import { Eye, EyeOff, LogIn } from "lucide-react";
 
 export default function Login() {
@@ -14,6 +14,7 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const { signIn, user } = useAuth();
+  const { toast } = useToast();
   const navigate = useNavigate();
 
   // Redirect if already logged in
@@ -31,14 +32,25 @@ export default function Login() {
       const { error } = await signIn(email, password);
       if (error) {
         console.error("Erro de login:", error);
-        toast.error("Erro ao fazer login: " + error.message);
+        toast({
+          title: "Erro ao fazer login",
+          description: error.message,
+          variant: "destructive"
+        });
       } else {
-        toast.success("Login realizado com sucesso!");
+        toast({
+          title: "Login realizado com sucesso",
+          description: "Você será redirecionado para o painel administrativo."
+        });
         navigate("/admin");
       }
     } catch (error: any) {
       console.error("Erro ao tentar login:", error);
-      toast.error("Erro ao fazer login: " + (error.message || "Credenciais inválidas"));
+      toast({
+        title: "Erro ao fazer login",
+        description: error.message || "Credenciais inválidas",
+        variant: "destructive"
+      });
     } finally {
       setIsLoading(false);
     }

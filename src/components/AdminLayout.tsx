@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Outlet } from "react-router-dom";
 import { Link, useLocation } from "react-router-dom";
-import { Calendar, Users, FileText, LogOut, Menu, User } from "lucide-react";
+import { Calendar, Users, FileText, LogOut, Menu, User, BarChart } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useState, useEffect } from "react";
 
@@ -38,6 +38,11 @@ export default function AdminLayout() {
       name: "Clientes",
       path: "clients",
       icon: Users,
+    },
+    {
+      name: "Financeiro",
+      path: "finance",
+      icon: BarChart,
     },
     {
       name: "Anotações",

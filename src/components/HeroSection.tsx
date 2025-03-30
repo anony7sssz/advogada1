@@ -1,6 +1,5 @@
 
 import { ArrowRight, Send } from "lucide-react";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 const HeroSection = () => {
   return (
@@ -11,7 +10,7 @@ const HeroSection = () => {
       
       {/* Content */}
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div className="space-y-6 text-center lg:text-left">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
               <span className="gradient-text">Nathalia</span> especializada em 
@@ -42,21 +41,20 @@ const HeroSection = () => {
             </div>
           </div>
           
-          <div className="hidden lg:block relative">
+          <div className="relative mx-auto max-w-lg lg:max-w-none">
             <div className="absolute -top-20 -left-20 w-64 h-64 bg-lawyer-purple/20 rounded-full blur-3xl"></div>
             <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-lawyer-blue/20 rounded-full blur-3xl"></div>
             
-            <div className="relative gradient-border animate-float p-6 rounded-lg">
-              <div className="aspect-[4/5] bg-gradient-to-br from-lawyer-purple/5 to-lawyer-blue/5 rounded-lg flex items-center justify-center">
-                <div className="text-center p-8">
-                  <div className="w-full flex justify-center mb-6">
-                    <img 
-                      src="/lovable-uploads/01f4ce23-58f8-4ae1-9f23-a6f7a825b4b3.png" 
-                      alt="Dra. Nathalia" 
-                      className="rounded-lg w-48 h-48 object-cover border-2 border-lawyer-purple/30"
-                    />
-                  </div>
-                  <div className="font-bold text-xl mb-4 gradient-text">Segurança Jurídica</div>
+            <div className="relative">
+              <img 
+                src="/lovable-uploads/476edd46-cdc4-4130-ab03-0f4cbcafcc0f.png" 
+                alt="Dra. Nathalia" 
+                className="rounded-lg h-[460px] w-auto mx-auto object-cover border-2 border-lawyer-purple/30 shadow-2xl shadow-lawyer-purple/20"
+              />
+              
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-lawyer-black/90 to-transparent p-6 rounded-b-lg">
+                <div className="text-center">
+                  <div className="font-bold text-2xl mb-2 gradient-text">Segurança Jurídica</div>
                   <p className="text-gray-300">
                     Contratos bem elaborados são a base para relações seguras e duradouras.
                     Proteja seus interesses com quem entende do assunto.

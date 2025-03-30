@@ -1,3 +1,4 @@
+
 import * as React from "react"
 
 import type {
@@ -5,8 +6,8 @@ import type {
   ToastProps,
 } from "@/components/ui/toast"
 
-const TOAST_LIMIT = 1
-const TOAST_REMOVE_DELAY = 1000000
+const TOAST_LIMIT = 3
+const TOAST_REMOVE_DELAY = 5000
 
 type ToasterToast = ToastProps & {
   id: string
@@ -74,9 +75,22 @@ const addToRemoveQueue = (toastId: string) => {
 export const reducer = (state: State, action: Action): State => {
   switch (action.type) {
     case "ADD_TOAST":
+      // Check for duplicate toasts by description
+      if (action.toast.description && state.toasts.some(t => 
+        t.description === action.toast.description && 
+        new Date().getTime() - (t.createdAt as number || 0) < 3000)) {
+        return state;
+      }
+      
       return {
         ...state,
-        toasts: [action.toast, ...state.toasts].slice(0, TOAST_LIMIT),
+        toasts: [
+          {
+            ...action.toast,
+            createdAt: new Date().getTime(),
+          },
+          ...state.toasts
+        ].slice(0, TOAST_LIMIT),
       }
 
     case "UPDATE_TOAST":

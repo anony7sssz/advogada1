@@ -13,6 +13,7 @@ import AdminLayout from "./components/AdminLayout";
 import Dashboard from "./pages/admin/Dashboard";
 import Clients from "./pages/admin/Clients";
 import Notes from "./pages/admin/Notes";
+import Finance from "./pages/admin/Finance";
 
 const queryClient = new QueryClient();
 
@@ -21,7 +22,6 @@ const App = () => (
     <AuthProvider>
       <TooltipProvider>
         <Toaster />
-        <Sonner />
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
@@ -33,6 +33,7 @@ const App = () => (
                 <Route path="/admin" element={<Dashboard />} />
                 <Route path="/admin/clients" element={<Clients />} />
                 <Route path="/admin/notes" element={<Notes />} />
+                <Route path="/admin/finance" element={<Finance />} />
               </Route>
             </Route>
             

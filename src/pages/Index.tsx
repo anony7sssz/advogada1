@@ -8,7 +8,8 @@ import ServicesSection from "@/components/ServicesSection";
 import ContactSection from "@/components/ContactSection";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { Toaster } from "sonner";
+import { Toaster } from "@/components/ui/toaster";
+import { Shield } from "lucide-react";
 
 export default function Index() {
   const { user } = useAuth();
@@ -16,7 +17,7 @@ export default function Index() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <Toaster position="top-right" richColors />
+      <Toaster />
       <Navbar />
       <div className="flex-1">
         <HeroSection />
@@ -26,11 +27,11 @@ export default function Index() {
         <div className="w-full max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 flex justify-center">
           {user ? (
             <Button onClick={() => navigate("/admin")}>
-              Acessar Painel Administrativo
+              <Shield className="h-5 w-5" />
             </Button>
           ) : (
-            <Button onClick={() => navigate("/login")}>
-              Área do Administrador
+            <Button variant="ghost" onClick={() => navigate("/login")} className="opacity-70 hover:opacity-100">
+              <Shield className="h-5 w-5 text-gray-300" />
             </Button>
           )}
         </div>
