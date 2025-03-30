@@ -1,4 +1,3 @@
-
 import * as React from "react"
 
 import type {
@@ -14,6 +13,7 @@ type ToasterToast = ToastProps & {
   title?: React.ReactNode
   description?: React.ReactNode
   action?: ToastActionElement
+  createdAt?: number
 }
 
 const actionTypes = {
@@ -78,7 +78,7 @@ export const reducer = (state: State, action: Action): State => {
       // Check for duplicate toasts by description
       if (action.toast.description && state.toasts.some(t => 
         t.description === action.toast.description && 
-        new Date().getTime() - (t.createdAt as number || 0) < 3000)) {
+        (t.createdAt && new Date().getTime() - t.createdAt < 3000))) {
         return state;
       }
       
