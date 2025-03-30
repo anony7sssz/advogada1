@@ -1,7 +1,7 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import {
   Table,
   TableBody,
@@ -17,8 +17,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Calendar, Clock, AlertCircle } from "lucide-react";
+import { Calendar, Clock, AlertCircle, Plus, User } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
@@ -37,6 +46,8 @@ type Appointment = {
 export default function Dashboard() {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedAppointmentId, setSelectedAppointmentId] = useState<string | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   useEffect(() => {
     fetchAppointments();
@@ -59,10 +70,8 @@ export default function Dashboard() {
       if (error) throw error;
       setAppointments(data || []);
     } catch (error: any) {
-      toast({
-        title: "Erro ao buscar consultas",
-        description: error.message,
-        variant: "destructive",
+      toast.error("Erro ao buscar consultas", {
+        description: error.message
       });
     } finally {
       setLoading(false);
@@ -82,15 +91,39 @@ export default function Dashboard() {
         appointment.id === id ? { ...appointment, status } : appointment
       ));
       
-      toast({
-        title: "Status atualizado",
-        description: "O status da consulta foi atualizado com sucesso.",
+      toast.success("Status atualizado", {
+        description: "O status da consulta foi atualizado com sucesso."
       });
     } catch (error: any) {
-      toast({
-        title: "Erro ao atualizar status",
-        description: error.message,
-        variant: "destructive",
+      toast.error("Erro ao atualizar status", {
+        description: error.message
+      });
+    }
+  }
+
+  async function moveToClients(appointmentId: string) {
+    try {
+      // Using the function we created in SQL
+      const { data, error } = await supabase
+        .rpc('appointment_to_client', { appointment_id: appointmentId });
+
+      if (error) throw error;
+
+      if (!data) {
+        toast.error("Erro ao mover para clientes", {
+          description: "Cliente não encontrado ou já existe"
+        });
+        return;
+      }
+
+      toast.success("Cliente movido com sucesso", {
+        description: "As informações foram atualizadas no cadastro de clientes."
+      });
+
+      setDialogOpen(false);
+    } catch (error: any) {
+      toast.error("Erro ao mover para clientes", {
+        description: error.message
       });
     }
   }
@@ -146,7 +179,7 @@ export default function Dashboard() {
                 <TableHead>Assunto</TableHead>
                 <TableHead>Data e Hora</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead className="text-right">Ações</TableHead>
+                <TableHead className="text-center">Ações</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -182,20 +215,82 @@ export default function Dashboard() {
                     </span>
                   </TableCell>
                   <TableCell className="text-right">
-                    <Select
-                      value={appointment.status}
-                      onValueChange={(value: any) => updateAppointmentStatus(appointment.id, value)}
-                    >
-                      <SelectTrigger className="w-32">
-                        <SelectValue placeholder="Alterar status" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="pending">Pendente</SelectItem>
-                        <SelectItem value="confirmed">Confirmada</SelectItem>
-                        <SelectItem value="completed">Concluída</SelectItem>
-                        <SelectItem value="canceled">Cancelada</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <div className="flex justify-end gap-2">
+                      <Select
+                        value={appointment.status}
+                        onValueChange={(value: any) => updateAppointmentStatus(appointment.id, value)}
+                      >
+                        <SelectTrigger className="w-32">
+                          <SelectValue placeholder="Alterar status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="pending">Pendente</SelectItem>
+                          <SelectItem value="confirmed">Confirmada</SelectItem>
+                          <SelectItem value="completed">Concluída</SelectItem>
+                          <SelectItem value="canceled">Cancelada</SelectItem>
+                        </SelectContent>
+                      </Select>
+
+                      <Dialog open={dialogOpen && selectedAppointmentId === appointment.id} 
+                             onOpenChange={(open) => {
+                               setDialogOpen(open);
+                               if (!open) setSelectedAppointmentId(null);
+                             }}>
+                        <DialogTrigger asChild>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="flex items-center gap-1"
+                            onClick={() => setSelectedAppointmentId(appointment.id)}
+                          >
+                            <User className="h-4 w-4" />
+                            <span>Cliente</span>
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                          <DialogHeader>
+                            <DialogTitle>Mover para Clientes</DialogTitle>
+                            <DialogDescription>
+                              Deseja adicionar ou atualizar este cliente no cadastro de clientes?
+                            </DialogDescription>
+                          </DialogHeader>
+                          
+                          <div className="py-4">
+                            <div className="grid grid-cols-2 gap-4">
+                              <div>
+                                <p className="text-sm font-medium mb-1">Nome</p>
+                                <p className="text-sm">{appointment.client?.name}</p>
+                              </div>
+                              <div>
+                                <p className="text-sm font-medium mb-1">Email</p>
+                                <p className="text-sm">{appointment.client?.email}</p>
+                              </div>
+                              <div>
+                                <p className="text-sm font-medium mb-1">Telefone</p>
+                                <p className="text-sm">{appointment.client?.phone || "Não informado"}</p>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <DialogFooter>
+                            <Button variant="outline" 
+                                   onClick={() => {
+                                     setDialogOpen(false);
+                                     setSelectedAppointmentId(null);
+                                   }}>
+                              Cancelar
+                            </Button>
+                            <Button 
+                              onClick={() => moveToClients(appointment.id)}
+                              className="flex items-center gap-1"
+                            >
+                              <Plus className="h-4 w-4" />
+                              <span>Adicionar/Atualizar</span>
+                            </Button>
+                          </DialogFooter>
+                        </DialogContent>
+                      </Dialog>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}

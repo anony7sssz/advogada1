@@ -147,6 +147,12 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      appointment_to_client: {
+        Args: {
+          appointment_id: string
+        }
+        Returns: string
+      }
       is_admin: {
         Args: Record<PropertyKey, never>
         Returns: boolean

@@ -79,7 +79,8 @@ const ContactSection = () => {
           client_id: clientData.id,
           subject: formData.subject,
           message: formData.message || null,
-          appointment_date: appointmentDate.toISOString()
+          appointment_date: appointmentDate.toISOString(),
+          status: 'pending'
         });
       
       if (appointmentError) {
