@@ -47,45 +47,21 @@ const ContactSection = () => {
     setIsSubmitting(true);
     
     try {
-      // First, create or find client
-      const { data: clientData, error: clientError } = await supabase
-        .from('clients')
-        .upsert({
+      // Use a função de serviço para criar cliente e agendamento
+      // ao invés de tentar inserir diretamente com RLS
+      const { data, error } = await supabase.functions.invoke('create-appointment', {
+        body: {
           name: formData.name,
           email: formData.email,
-          phone: formData.phone || null
-        }, {
-          onConflict: 'email'
-        })
-        .select('id')
-        .single();
-      
-      if (clientError) {
-        console.error("Erro ao criar/encontrar cliente:", clientError);
-        throw clientError;
-      }
-      
-      if (!clientData || !clientData.id) {
-        throw new Error("Falha ao obter o ID do cliente");
-      }
-      
-      // Set appointment date to next business day at 14:00
-      const appointmentDate = getNextBusinessDay();
-      
-      // Create appointment
-      const { error: appointmentError } = await supabase
-        .from('appointments')
-        .insert({
-          client_id: clientData.id,
+          phone: formData.phone || null,
           subject: formData.subject,
           message: formData.message || null,
-          appointment_date: appointmentDate.toISOString(),
-          status: 'pending'
-        });
+        }
+      });
       
-      if (appointmentError) {
-        console.error("Erro ao criar agendamento:", appointmentError);
-        throw appointmentError;
+      if (error) {
+        console.error("Erro ao agendar consulta:", error);
+        throw error;
       }
       
       toast.success("Consulta agendada com sucesso! Entraremos em contato para confirmar.", {
@@ -107,25 +83,6 @@ const ContactSection = () => {
     } finally {
       setIsSubmitting(false);
     }
-  };
-  
-  // Helper function to get next business day at 14:00
-  const getNextBusinessDay = () => {
-    const date = new Date();
-    date.setHours(14, 0, 0, 0); // Set to 14:00
-    
-    // Add 1 day
-    date.setDate(date.getDate() + 1);
-    
-    // If it's weekend, adjust to Monday
-    const dayOfWeek = date.getDay();
-    if (dayOfWeek === 6) { // Saturday
-      date.setDate(date.getDate() + 2);
-    } else if (dayOfWeek === 0) { // Sunday
-      date.setDate(date.getDate() + 1);
-    }
-    
-    return date;
   };
 
   return (
