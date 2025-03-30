@@ -107,6 +107,39 @@ export type Database = {
         }
         Relationships: []
       }
+      financial_records: {
+        Row: {
+          amount: number
+          category: string | null
+          created_at: string
+          description: string
+          id: string
+          record_date: string
+          record_type: string
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          category?: string | null
+          created_at?: string
+          description: string
+          id?: string
+          record_date?: string
+          record_type: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          category?: string | null
+          created_at?: string
+          description?: string
+          id?: string
+          record_date?: string
+          record_type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       notes: {
         Row: {
           client_id: string | null

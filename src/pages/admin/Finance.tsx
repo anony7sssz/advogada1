@@ -1,5 +1,4 @@
 
-import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { 
   BarChart,
@@ -17,12 +16,23 @@ import {
   Cell
 } from "recharts";
 import { useToast } from "@/hooks/use-toast";
-import { Button } from "@/components/ui/button";
-import { PlusCircle, Download } from "lucide-react";
+import { useState, useEffect } from "react";
+import { NewRecordDialog } from "@/components/financial/NewRecordDialog";
+import { ExportDialog } from "@/components/financial/ExportDialog";
+import { FinancialTable } from "@/components/financial/FinancialTable";
+import { supabase } from "@/integrations/supabase/client";
 
 export default function Finance() {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("overview");
+  const [summary, setSummary] = useState({
+    totalRevenue: 0,
+    totalExpenses: 0,
+    balance: 0,
+    clientsCount: 0,
+    averageValue: 0,
+  });
+  const [isLoading, setIsLoading] = useState(true);
   
   // Sample data
   const revenueData = [
@@ -53,18 +63,59 @@ export default function Finance() {
     { month: "Jul", novos: 8, recorrentes: 22 },
   ];
 
-  const handleDownload = () => {
-    toast({
-      title: "Relatório baixado",
-      description: "O relatório financeiro foi gerado com sucesso.",
-    });
-  };
+  // Fetch summary data
+  useEffect(() => {
+    const fetchSummary = async () => {
+      try {
+        setIsLoading(true);
+        
+        // Get revenue and expenses data
+        const { data: financialData, error: financialError } = await supabase
+          .from('financial_records')
+          .select('*');
+        
+        if (financialError) throw financialError;
+        
+        // Calculate summary values
+        const revenue = financialData
+          ?.filter(record => record.record_type === 'receita')
+          .reduce((sum, record) => sum + Number(record.amount), 0) || 0;
+          
+        const expenses = financialData
+          ?.filter(record => record.record_type === 'despesa')
+          .reduce((sum, record) => sum + Number(record.amount), 0) || 0;
+        
+        // Get client count
+        const { count: clientCount, error: clientError } = await supabase
+          .from('clients')
+          .select('*', { count: 'exact', head: true });
+        
+        if (clientError) throw clientError;
+        
+        const avgValue = clientCount && revenue ? revenue / clientCount : 0;
+        
+        setSummary({
+          totalRevenue: revenue,
+          totalExpenses: expenses,
+          balance: revenue - expenses,
+          clientsCount: clientCount || 0,
+          averageValue: avgValue,
+        });
+      } catch (error: any) {
+        console.error('Error fetching summary:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchSummary();
+  }, []);
 
-  const handleAddRevenue = () => {
-    toast({
-      title: "Recurso em desenvolvimento",
-      description: "O módulo de registro financeiro estará disponível em breve.",
-    });
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    }).format(value);
   };
 
   return (
@@ -74,14 +125,8 @@ export default function Finance() {
           Gestão Financeira
         </h2>
         <div className="flex gap-2">
-          <Button onClick={handleAddRevenue} className="flex items-center gap-2">
-            <PlusCircle className="w-4 h-4" />
-            <span>Novo Registro</span>
-          </Button>
-          <Button variant="outline" onClick={handleDownload} className="flex items-center gap-2">
-            <Download className="w-4 h-4" />
-            <span>Exportar</span>
-          </Button>
+          <NewRecordDialog />
+          <ExportDialog />
         </div>
       </div>
 
@@ -93,8 +138,13 @@ export default function Finance() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold gradient-text">R$ 24.350,00</div>
-            <p className="text-xs text-gray-500">+20.1% em relação ao mês anterior</p>
+            <div className="text-2xl font-bold gradient-text">
+              {isLoading ? 'Carregando...' : formatCurrency(summary.totalRevenue)}
+            </div>
+            <p className="text-xs text-gray-500">
+              {summary.balance > 0 ? '+' : ''}
+              {isLoading ? '' : `${(summary.balance / (summary.totalExpenses || 1) * 100).toFixed(1)}% em relação às despesas`}
+            </p>
           </CardContent>
         </Card>
         <Card className="bg-lawyer-black/50 border-lawyer-purple/20">
@@ -104,19 +154,23 @@ export default function Finance() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold gradient-text">+28</div>
-            <p className="text-xs text-gray-500">+12 novos nos últimos 30 dias</p>
+            <div className="text-2xl font-bold gradient-text">
+              {isLoading ? 'Carregando...' : `+${summary.clientsCount}`}
+            </div>
+            <p className="text-xs text-gray-500">Dados atualizados em tempo real</p>
           </CardContent>
         </Card>
         <Card className="bg-lawyer-black/50 border-lawyer-purple/20">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-gray-300">
-              Valor Médio por Caso
+              Valor Médio por Cliente
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold gradient-text">R$ 2.450,00</div>
-            <p className="text-xs text-gray-500">+5% em relação ao mês anterior</p>
+            <div className="text-2xl font-bold gradient-text">
+              {isLoading ? 'Carregando...' : formatCurrency(summary.averageValue)}
+            </div>
+            <p className="text-xs text-gray-500">Baseado no total de receitas</p>
           </CardContent>
         </Card>
       </div>
@@ -221,6 +275,15 @@ export default function Finance() {
           </CardContent>
         </Card>
       </div>
+
+      <Card className="bg-lawyer-black/50 border-lawyer-purple/20">
+        <CardHeader>
+          <CardTitle>Registros Financeiros</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <FinancialTable />
+        </CardContent>
+      </Card>
     </div>
   );
 }

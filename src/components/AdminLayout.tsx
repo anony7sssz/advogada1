@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Outlet } from "react-router-dom";
 import { Link, useLocation } from "react-router-dom";
-import { Calendar, Users, FileText, LogOut, Menu, User, BarChart } from "lucide-react";
+import { Calendar, Users, FileText, LogOut, Menu, User, BarChart, Home } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useState, useEffect } from "react";
 
@@ -80,6 +80,15 @@ export default function AdminLayout() {
                       </div>
                     </div>
                     <nav className="flex flex-col gap-1 p-3">
+                      <Link 
+                        to="/" 
+                        onClick={() => setOpen(false)}
+                        className="flex items-center gap-3 p-3 rounded-md transition-colors hover:bg-white/5 text-gray-300 hover:text-white"
+                      >
+                        <Home className="h-5 w-5" />
+                        <span>Página Inicial</span>
+                      </Link>
+                      <div className="h-px bg-white/5 my-2"></div>
                       {navItems.map((item) => (
                         <Link 
                           key={item.path} 
@@ -114,6 +123,10 @@ export default function AdminLayout() {
           </div>
           
           <div className="flex items-center gap-4">
+            <Link to="/" className="hidden md:flex items-center gap-2 hover:text-white text-gray-300 transition-colors">
+              <Home className="h-4 w-4" />
+              <span>Página Inicial</span>
+            </Link>
             <div className="hidden md:flex items-center gap-2 bg-white/5 px-3 py-2 rounded-full text-sm border border-white/10">
               <User className="h-4 w-4 text-lawyer-purple-light" />
               <span className="text-gray-300">{user?.email}</span>
@@ -135,6 +148,14 @@ export default function AdminLayout() {
         {/* Sidebar - desktop only */}
         <aside className="hidden md:block w-64 bg-lawyer-black/30 backdrop-blur-sm border-r border-white/10 p-4">
           <nav className="flex flex-col gap-1">
+            <Link 
+              to="/" 
+              className="flex items-center gap-3 p-3 rounded-md transition-colors hover:bg-white/5 text-gray-300 hover:text-white"
+            >
+              <Home className="h-5 w-5" />
+              <span>Página Inicial</span>
+            </Link>
+            <div className="h-px bg-white/5 my-2"></div>
             {navItems.map((item) => (
               <Link 
                 key={item.path} 

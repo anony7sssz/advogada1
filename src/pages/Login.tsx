@@ -6,7 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
-import { Eye, EyeOff, LogIn } from "lucide-react";
+import { Eye, EyeOff, LogIn, Home } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export default function Login() {
   const [email, setEmail] = useState("admin@advogada.com");
@@ -129,6 +130,13 @@ export default function Login() {
         <div className="mt-4 text-center text-sm text-gray-400 p-3 bg-white/5 rounded-lg">
           <p>Usuário padrão: admin@advogada.com</p>
           <p className="mt-1">Senha: Solicite ao administrador</p>
+        </div>
+
+        <div className="mt-4 text-center">
+          <Link to="/" className="flex items-center justify-center gap-2 text-gray-300 hover:text-white">
+            <Home className="h-4 w-4" />
+            <span>Voltar para a página inicial</span>
+          </Link>
         </div>
       </div>
     </div>
